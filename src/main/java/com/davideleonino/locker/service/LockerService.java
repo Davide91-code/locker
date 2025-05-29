@@ -6,6 +6,7 @@ import com.davideleonino.locker.repository.BoxRepository;
 import com.davideleonino.locker.repository.OperazioneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,6 +43,7 @@ public class LockerService {
         return  boxRepository.findBoxUsatiOrdineDecrescente();
     }
 
+    @Transactional
     public Box creaBox(Integer numBox) {
         if (boxRepository.findByNumBox(numBox).isPresent()) {
             throw new RuntimeException("Box con questo numero già esistente");
@@ -54,6 +56,7 @@ public class LockerService {
         return boxRepository.findByNumBox(numBox);
     }
 
+    @Transactional
     public String deposita(Integer numBox) {
         Box box = boxRepository.findByNumBox(numBox)
                 .orElseThrow(() -> new RuntimeException("Box non trovato"));
@@ -62,7 +65,7 @@ public class LockerService {
             throw new RuntimeException("Box già occupato");
         }
 
-        String codice = UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+        String codice = generaCodiceAccesso();
         box.setUsed(true);
         boxRepository.save(box);
 
@@ -77,11 +80,17 @@ public class LockerService {
         return codice;
     }
 
+    @Transactional
     public void ritira(String codiceAccesso) {
         Operazione op = operazioneRepository.findByCodiceAccesso(codiceAccesso)
                 .orElseThrow(() -> new RuntimeException("Codice non valido"));
 
         Box box = op.getBoxAssociato();
+
+        if (!box.isUsed()) {
+            throw new RuntimeException("Box già ritirato.");
+        }
+
         box.setUsed(false);
         boxRepository.save(box);
 
@@ -94,14 +103,20 @@ public class LockerService {
         operazioneRepository.save(operazioneRitiro);
     }
 
+    @Transactional
     public Box updateBox(Integer numBox, Integer nuovoNumBox) {
         Box box = boxRepository.findByNumBox(numBox)
                 .orElseThrow(() -> new RuntimeException("Box non trovato"));
 
+        if (boxRepository.findByNumBox(nuovoNumBox).isPresent()) {
+            throw new RuntimeException("Numero già esistente.");
+        }
         box.setNumBox(nuovoNumBox);
+
         return boxRepository.save(box);
     }
 
+    @Transactional
     public void deleteBox(Integer numBox) {
         Box box = boxRepository.findByNumBox(numBox)
                 .orElseThrow(() -> new RuntimeException("Box non trovato"));
@@ -110,6 +125,10 @@ public class LockerService {
         }
 
         boxRepository.delete(box);
+    }
+
+    private String generaCodiceAccesso() {
+        return UUID.randomUUID().toString().substring(0, 6).toUpperCase();
     }
 
 

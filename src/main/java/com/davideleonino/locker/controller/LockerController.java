@@ -3,6 +3,7 @@ package com.davideleonino.locker.controller;
 import com.davideleonino.locker.DTO.*;
 import com.davideleonino.locker.model.Box;
 import com.davideleonino.locker.service.LockerService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class LockerController {
     private LockerService lockerService;
 
     @PostMapping("/boxes")      //con dto
-    public ResponseEntity<Box> creaBox(@RequestBody CreaBoxDTO dto) {
+    public ResponseEntity<Box> creaBox(@RequestBody @Valid CreaBoxDTO dto) {
         Box box = lockerService.creaBox(dto.getNumBox());
         return ResponseEntity.ok(box);
     }
@@ -57,7 +58,7 @@ public class LockerController {
     }
 
     @PostMapping("/deposita")
-    public ResponseEntity<String> deposita(@RequestBody DepositoDTO dto) {
+    public ResponseEntity<String> deposita(@RequestBody @Valid DepositoDTO dto) {
         try {
             String codiceAccesso = lockerService.deposita(dto.getNumBox());
             return ResponseEntity.ok("Deposito effettuato. Codice di accesso per il ritiro:" + codiceAccesso);
@@ -69,7 +70,7 @@ public class LockerController {
 
 
     @PostMapping("/ritira")
-    public ResponseEntity<String> ritira(@RequestBody RitiroDTO dto){
+    public ResponseEntity<String> ritira(@RequestBody @Valid RitiroDTO dto){
         try {
             lockerService.ritira(dto.getCodiceAccesso());
             return ResponseEntity.ok("Ritiro effettuato con successo.");
@@ -83,8 +84,8 @@ public class LockerController {
         }
     }
 
-    @PutMapping("/boxes/{numBox}")
-    public ResponseEntity<Map<String, String>> updateBox(@RequestBody UpdateBoxDTO dto) {
+    @PutMapping("/boxes")
+    public ResponseEntity<Map<String, String>> updateBox(@RequestBody @Valid UpdateBoxDTO dto) {
         try {
             lockerService.updateBox(dto.getNumBoxAttuale(), dto.getNuovoNumBox());
             return ResponseEntity.ok(Map.of("messaggio", "Box aggiornato con successo."));
