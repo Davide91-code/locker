@@ -39,8 +39,8 @@ public class LockerService {
     }
 
     //query box usati in ordine decrecs
-    public  List<Box> getBoxUsatiOrdineD(){
-        return  boxRepository.findBoxUsatiOrdineDecrescente();
+    public  List<Box> getBoxOccupatiOrdinatiD(){
+        return  boxRepository.findBoxOccupatiOrdinatiDecrescente();
     }
 
     @Transactional

@@ -1,7 +1,10 @@
-package com.davideleonino.locker.DTO;
+package com.davideleonino.locker.dto.request;
 
-public class DeleteBoxDTO {
+import jakarta.validation.constraints.NotNull;
 
+public class DepositoRequestDto {
+
+    @NotNull
     private Integer numBox;
 
     public Integer getNumBox() {

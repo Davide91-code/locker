@@ -17,6 +17,6 @@ public interface BoxRepository extends JpaRepository<Box, Integer>{
     List<Box> findByIsUsedTrue();
 
     @Query("SELECT b FROM Box b WHERE b.isUsed = true ORDER BY b.numBox DESC")
-    List<Box> findBoxUsatiOrdineDecrescente();
+    List<Box> findBoxOccupatiOrdinatiDecrescente();
 }
 

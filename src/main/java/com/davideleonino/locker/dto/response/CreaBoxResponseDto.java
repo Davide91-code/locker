@@ -1,10 +1,10 @@
-package com.davideleonino.locker.DTO;
+package com.davideleonino.locker.dto.response;
 
-public class RitiroResponseDTO {
+public class CreaBoxResponseDto {
 
     private String message;
 
-    public RitiroResponseDTO(String message) {
+    public CreaBoxResponseDto(String message) {
         this.message = message;
     }
 

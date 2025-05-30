@@ -1,8 +1,8 @@
-package com.davideleonino.locker.DTO;
+package com.davideleonino.locker.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 
-public class RitiroDTO {
+public class RitiroRequestDto {
 
     @NotBlank
     private String codiceAccesso;

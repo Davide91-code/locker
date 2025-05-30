@@ -1,6 +1,12 @@
 package com.davideleonino.locker.controller;
 
-import com.davideleonino.locker.DTO.*;
+import com.davideleonino.locker.dto.request.CreaBoxRequestDto;
+import com.davideleonino.locker.dto.request.DepositoRequestDto;
+import com.davideleonino.locker.dto.request.RitiroRequestDto;
+import com.davideleonino.locker.dto.request.UpdateBoxRequestDto;
+import com.davideleonino.locker.dto.response.DepositoResponseDto;
+import com.davideleonino.locker.dto.response.RitiroResponseDto;
+import com.davideleonino.locker.dto.response.UpdateBoxResponseDto;
 import com.davideleonino.locker.model.Box;
 import com.davideleonino.locker.service.LockerService;
 import jakarta.validation.Valid;
@@ -19,7 +25,7 @@ public class LockerController {
     private LockerService lockerService;
 
     @PostMapping("/boxes")      //con dto
-    public ResponseEntity<Box> creaBox(@RequestBody @Valid CreaBoxDTO dto) {
+    public ResponseEntity<Box> creaBox(@RequestBody @Valid CreaBoxRequestDto dto) {
         Box box = lockerService.creaBox(dto.getNumBox());
         return ResponseEntity.ok(box);
     }
@@ -46,8 +52,8 @@ public class LockerController {
 
     //query box occupati ordine decres endpoint
     @GetMapping("/boxes/occupati_ordinati")
-    public ResponseEntity <List<Box>> getBoxUsatiOrdineD(){
-        return  ResponseEntity.ok(lockerService.getBoxUsatiOrdineD());
+    public ResponseEntity <List<Box>> getBoxOccupatiOrdinatiD(){
+        return  ResponseEntity.ok(lockerService.getBoxOccupatiOrdinatiD());
     }
 
     @GetMapping("/boxes/{numBox}")
@@ -58,53 +64,60 @@ public class LockerController {
     }
 
     @PostMapping("/deposita")
-    public ResponseEntity<String> deposita(@RequestBody @Valid DepositoDTO dto) {
+    public ResponseEntity<DepositoResponseDto> deposita(@RequestBody @Valid DepositoRequestDto dto) {
         try {
             String codiceAccesso = lockerService.deposita(dto.getNumBox());
-            return ResponseEntity.ok("Deposito effettuato. Codice di accesso per il ritiro:" + codiceAccesso);
+            DepositoResponseDto response = new DepositoResponseDto("Deposito effettuato con successo", codiceAccesso);
+            return ResponseEntity.ok(response);
         } catch (RuntimeException err) {
-            return ResponseEntity.badRequest().body("Errore nel deposito: " + err.getMessage());
+            DepositoResponseDto response = new DepositoResponseDto("Errore nel deposito: " + err.getMessage(), null);
+            return ResponseEntity.badRequest().body(response);
         }
-
     }
 
 
     @PostMapping("/ritira")
-    public ResponseEntity<String> ritira(@RequestBody @Valid RitiroDTO dto){
+    public ResponseEntity<RitiroResponseDto> ritira(@RequestBody @Valid RitiroRequestDto dto) {
         try {
             lockerService.ritira(dto.getCodiceAccesso());
-            return ResponseEntity.ok("Ritiro effettuato con successo.");
+            RitiroResponseDto response = new RitiroResponseDto("Ritiro effettuato con successo.");
+            return ResponseEntity.ok(response);
         } catch (RuntimeException err) {
-
             if (err.getMessage().equals("Codice non valido")) {
-                return ResponseEntity.status(404).body("Errore nel ritiro: " + err.getMessage());
+                RitiroResponseDto response = new RitiroResponseDto("Errore nel ritiro: " + err.getMessage());
+                return ResponseEntity.status(404).body(response);
             }
-
-            return ResponseEntity.badRequest().body("Errore nel ritiro: " + err.getMessage());
+            RitiroResponseDto response = new RitiroResponseDto("Errore nel ritiro: " + err.getMessage());
+            return ResponseEntity.badRequest().body(response);
         }
     }
 
     @PutMapping("/boxes")
-    public ResponseEntity<Map<String, String>> updateBox(@RequestBody @Valid UpdateBoxDTO dto) {
+    public ResponseEntity<UpdateBoxResponseDto> updateBox(@RequestBody @Valid UpdateBoxRequestDto dto) {
         try {
             lockerService.updateBox(dto.getNumBoxAttuale(), dto.getNuovoNumBox());
-            return ResponseEntity.ok(Map.of("messaggio", "Box aggiornato con successo."));
+            UpdateBoxResponseDto response = new UpdateBoxResponseDto("Box aggiornato con successo.");
+            return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(Map.of("errore", e.getMessage()));
+            UpdateBoxResponseDto response = new UpdateBoxResponseDto("Errore: " + e.getMessage());
+            return ResponseEntity.badRequest().body(response);
         }
     }
 
     @DeleteMapping("/boxes/{numBox}")
-    public ResponseEntity<Map<String, String>>  deleteBox(@PathVariable Integer numBox) {
+    public ResponseEntity<Map<String, String>> deleteBox(@PathVariable Integer numBox) {
         try {
             lockerService.deleteBox(numBox);
             return ResponseEntity.ok(Map.of("messaggio", "Box eliminato con successo."));
         } catch (RuntimeException e) {
-            return e.getMessage().contains("occupato")
-                    ? ResponseEntity.badRequest().body(Map.of("errore", e.getMessage()))
-                    : ResponseEntity.status(404).body(Map.of("errore", "Box non trovato."));
+            if (e.getMessage().contains("occupato")) {
+                return ResponseEntity.badRequest().body(Map.of("errore", e.getMessage()));
+            } else {
+                return ResponseEntity.status(404).body(Map.of("errore", "Box non trovato."));
+            }
         }
     }
+
 
 
 }

@@ -1,11 +1,11 @@
-package com.davideleonino.locker.DTO;
+package com.davideleonino.locker.dto.response;
 
-public class DepositoResponseDTO {
+public class DepositoResponseDto {
 
     private String message;
     private String codiceAccesso;
 
-    public DepositoResponseDTO(String message, String codiceAccesso) {
+    public DepositoResponseDto(String message, String codiceAccesso) {
         this.message = message;
         this.codiceAccesso = codiceAccesso;
     }

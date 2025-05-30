@@ -1,10 +1,10 @@
-package com.davideleonino.locker.DTO;
+package com.davideleonino.locker.dto.request;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 
-public class CreaBoxDTO {
+public class CreaBoxRequestDto {
 
     @NotNull
     @Min(1)
