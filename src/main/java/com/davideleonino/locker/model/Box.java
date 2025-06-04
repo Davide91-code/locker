@@ -47,7 +47,7 @@ public class Box {
         return numBox;
     }
 
-    public void setNumBox(Integer nBox) {
+    public void setNumBox(Integer numBox) {
         this.numBox = numBox;
     }
 
