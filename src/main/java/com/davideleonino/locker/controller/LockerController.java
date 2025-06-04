@@ -1,9 +1,6 @@
 package com.davideleonino.locker.controller;
 
-import com.davideleonino.locker.dto.request.CreaBoxRequestDto;
-import com.davideleonino.locker.dto.request.DepositoRequestDto;
-import com.davideleonino.locker.dto.request.RitiroRequestDto;
-import com.davideleonino.locker.dto.request.UpdateBoxRequestDto;
+import com.davideleonino.locker.dto.request.*;
 import com.davideleonino.locker.dto.response.DepositoResponseDto;
 import com.davideleonino.locker.dto.response.RitiroResponseDto;
 import com.davideleonino.locker.dto.response.UpdateBoxResponseDto;
@@ -16,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/locker")
@@ -28,6 +26,11 @@ public class LockerController {
     public ResponseEntity<Box> creaBox(@RequestBody @Valid CreaBoxRequestDto dto) {
         Box box = lockerService.creaBox(dto.getNumBox());
         return ResponseEntity.ok(box);
+    }
+    @PostMapping("/boxes/range")
+    public ResponseEntity<List<Box>> creaBoxesRange(@RequestBody @Valid CreaBoxRangeRequestDto dto) {
+        List<Box> boxes = lockerService.creaBoxesDaRange(dto.getStart(), dto.getEnd());
+        return ResponseEntity.ok(boxes);
     }
 
 
@@ -62,6 +65,19 @@ public class LockerController {
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/boxes/statistiche")
+    public ResponseEntity<Map<String, Object>> getStatisticheBox() {
+        return ResponseEntity.ok(lockerService.getStatisticheBox());
+    }
+
+    @GetMapping("/boxes/occupati_piu_tempo")
+    public ResponseEntity<List<Box>> getBoxOccupatiDaPiuTempo() {
+        List<Box> boxes = lockerService.getBoxOccupatiDaPiuTempo();
+        return ResponseEntity.ok(boxes);
+    }
+
+
 
     @PostMapping("/deposita")
     public ResponseEntity<DepositoResponseDto> deposita(@RequestBody @Valid DepositoRequestDto dto) {
@@ -115,6 +131,16 @@ public class LockerController {
             } else {
                 return ResponseEntity.status(404).body(Map.of("errore", "Box non trovato."));
             }
+        }
+    }
+
+    @DeleteMapping("/boxes/range")
+    public ResponseEntity<Map<String, String>> deleteBoxesRange(@RequestBody @Valid DeleteBoxesRangeRequestDto dto) {
+        try {
+            lockerService.deleteBoxesDaRange(dto.getStart(), dto.getEnd());
+            return ResponseEntity.ok(Map.of("message", "Box eliminati con successo"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
 

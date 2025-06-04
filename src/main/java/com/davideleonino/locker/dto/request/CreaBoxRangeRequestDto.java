@@ -1,20 +1,27 @@
 package com.davideleonino.locker.dto.request;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
-import java.util.List;
+public class CreaBoxRangeRequestDto {
+    @NotNull
+    private Integer start;
 
-public class CreaBoxesBatchRequestDto {
-    @NotEmpty(message = "La lista dei box non può essere vuota")
-    @Valid
-    private List<CreaBoxRequestDto> boxes;
+    @NotNull
+    private Integer end;
 
-    public List<CreaBoxRequestDto> getBoxes() {
-        return boxes;
+    public Integer getStart() {
+        return start;
     }
 
-    public void setBoxes(List<CreaBoxRequestDto> boxes) {
-        this.boxes = boxes;
+    public void setStart(Integer start) {
+        this.start = start;
+    }
+
+    public Integer getEnd() {
+        return end;
+    }
+
+    public void setEnd(Integer end) {
+        this.end = end;
     }
 }
