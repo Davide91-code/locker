@@ -44,7 +44,7 @@ public class BoxRepositoryMockTest {
         assertNull(result.getNumBox());
         assertFalse(result.isUsed());
 
-        // Debug visivo per mostrarre il risultato
+        // Debug visivo per mostarre il risultato
         System.out.println("MockBox salvato: ID=" + result.getId() + ", numBox=" + result.getNumBox());
     }
 }

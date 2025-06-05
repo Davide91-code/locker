@@ -71,8 +71,16 @@ public class LockerService {
         return boxRepository.save(box);
     }
 
+    /*
     public Optional<Box> getBoxByNumBox(Integer numBox){
         return boxRepository.findByNumBox(numBox);
+    }
+
+     */
+
+    public Box getBoxByNumBox(Integer numBox) {
+        return boxRepository.findByNumBox(numBox)
+                .orElseThrow(() -> new RuntimeException("Box con numero " + numBox + " non trovato"));
     }
 
     @Transactional
