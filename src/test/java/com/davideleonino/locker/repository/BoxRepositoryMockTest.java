@@ -12,6 +12,8 @@ public class BoxRepositoryMockTest {
 
     private BoxRepository boxRepository;
 
+
+    // inserire sempre prima del test per mfarlo agire su ambiente/box simulato. MOck non tocca il database
     @BeforeEach
     void setUp() {
         // Crea un mock del repository
@@ -42,7 +44,7 @@ public class BoxRepositoryMockTest {
         assertNull(result.getNumBox());
         assertFalse(result.isUsed());
 
-        // Debug visivo
+        // Debug visivo per mostrarre il risultato
         System.out.println("MockBox salvato: ID=" + result.getId() + ", numBox=" + result.getNumBox());
     }
 }
