@@ -177,19 +177,47 @@ public class LockerService {
             throw new RuntimeException("Start non può essere maggiore di end");
         }
 
-        // IntStream.rangeClosed genera i numeri da start a end inclusi
+        List<Integer> nonTrovati = new ArrayList<>();
+        List<Integer> occupati = new ArrayList<>();
+
         IntStream.rangeClosed(start, end).forEach(num -> {
-            Box box = boxRepository.findByNumBox(num)
-                    .orElseThrow(() -> new RuntimeException("Box non trovato: " + num));
-            if (box.isUsed()) {
-                throw new RuntimeException("Impossibile eliminare box occupato: " + num);
+            Optional<Box> optBox = boxRepository.findByNumBox(num);
+            if (optBox.isEmpty()) {
+                nonTrovati.add(num);
+            } else if (optBox.get().isUsed()) {
+                occupati.add(num);
+            } else {
+                boxRepository.delete(optBox.get());
             }
-            boxRepository.delete(box);
         });
+
+        if (!nonTrovati.isEmpty() || !occupati.isEmpty()) {
+            StringBuilder msg = new StringBuilder("Alcuni box non sono stati eliminati: ");
+            if (!nonTrovati.isEmpty()) {
+                msg.append("non trovati: ").append(nonTrovati).append(". ");
+            }
+            if (!occupati.isEmpty()) {
+                msg.append("occupati: ").append(occupati);
+            }
+            throw new RuntimeException(msg.toString());
+        }
     }
 
+
+    /* // il metodo va bene ma potrebbe creare problemi incaso di duplicati
     private String generaCodiceAccesso() {
         return UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+    }
+
+     */  // in questo caso posso creare un codice verificando prima che non sia presente in database.
+    // UN alternativa potrebbe essere generarlo tramite ciclo for in associazione con private final e quindi lavorando su elementi statici e non modificabili
+
+    private String generaCodiceAccesso() {
+        String codice;
+        do {
+            codice = UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+        } while (operazioneRepository.findByCodiceAccesso(codice).isPresent());
+        return codice;
     }
 
 

@@ -5,13 +5,14 @@ import jakarta.validation.constraints.NotNull;
 
 public class UpdateBoxRequestDto {
 
-    @NotNull
-    @Min(1)
+    @NotNull(message = "Il numero attuale del box non può essere nullo")
+    @Min(value = 1, message = "Il numero attuale del box deve essere almeno 1")
     private Integer numBoxAttuale;
 
-    @NotNull
-    @Min(1)
+    @NotNull(message = "Il nuovo numero del box non può essere nullo")
+    @Min(value = 1, message = "Il nuovo numero del box deve essere almeno 1")
     private Integer nuovoNumBox;
+
 
     public Integer getNumBoxAttuale() {
         return numBoxAttuale;
