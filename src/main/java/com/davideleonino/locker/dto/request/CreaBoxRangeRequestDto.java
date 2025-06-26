@@ -1,3 +1,4 @@
+// CreaBoxRangeRequestDto.java (create range boxes)
 package com.davideleonino.locker.dto.request;
 
 import jakarta.validation.constraints.Min;
@@ -5,26 +6,16 @@ import jakarta.validation.constraints.NotNull;
 
 public class CreaBoxRangeRequestDto {
     @NotNull
-    @Min(value = 1, message = "Il numero deve essere maggiore di 0")
+    @Min(1)
     private Integer start;
 
     @NotNull
-    @Min(value = 1, message = "Il numero deve essere maggiore di 0")
+    @Min(1)
     private Integer end;
 
-    public Integer getStart() {
-        return start;
-    }
+    public Integer getStart() { return start; }
+    public void setStart(Integer start) { this.start = start; }
 
-    public void setStart(Integer start) {
-        this.start = start;
-    }
-
-    public Integer getEnd() {
-        return end;
-    }
-
-    public void setEnd(Integer end) {
-        this.end = end;
-    }
+    public Integer getEnd() { return end; }
+    public void setEnd(Integer end) { this.end = end; }
 }

@@ -1,3 +1,4 @@
+// DeleteBoxesRangeRequestDto.java (delete range of boxes)
 package com.davideleonino.locker.dto.request;
 
 import jakarta.validation.constraints.NotNull;
